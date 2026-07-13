@@ -134,24 +134,34 @@ window.deleteTask = async function (id) {
 
 // ================= FILE UPLOAD (STORAGE) =================
 window.uploadFile = function () {
+ window.uploadFile = async function () {
+
   let file = document.getElementById("fileUpload").files[0];
 
   if (!file) return alert("Select file!");
 
-  let storageRef = ref(storage, `files/${currentUser}/${file.name}`);
+  if (!currentUser) return alert("Login first!");
 
-  uploadBytes(storageRef, file).then(async () => {
+  try {
+
+    let storageRef = ref(storage, `files/${currentUser}/${file.name}`);
+
+    await uploadBytes(storageRef, file);
+
     let url = await getDownloadURL(storageRef);
 
     await addDoc(collection(db, "files"), {
       user: currentUser,
       name: file.name,
-      url: url
+      url:url
     });
 
     alert("Uploaded!");
     loadFiles();
-  });
+
+  } catch(e){
+    alert(e.message);
+  }
 };
 
 // ================= LOAD FILES =================
@@ -191,3 +201,12 @@ window.deleteFile = async function (id) {
 window.addEventListener("DOMContentLoaded", () => {
   currentUser = auth.currentUser?.email || null;
 });
+  window.loadImage = function(event){
+
+  let img = document.getElementById("profilePic");
+
+  img.src = URL.createObjectURL(
+    event.target.files[0]
+  );
+
+};
