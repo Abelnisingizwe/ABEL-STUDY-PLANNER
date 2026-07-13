@@ -32,9 +32,8 @@ window.signup = async function () {
   let password = document.getElementById("newPass").value;
 
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
     alert("Account created!");
-    showLogin();
+window.showLogin();
   } catch (e) {
     alert(e.message);
   }
