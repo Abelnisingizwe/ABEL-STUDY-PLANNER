@@ -21,10 +21,8 @@ import {
 import {
   ref,
   uploadBytes,
-  getDownloadURL,
-  deleteObject
+  getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
 // ================= USER =================
 let currentUser = null;
 
@@ -213,5 +211,35 @@ window.addEventListener("DOMContentLoaded", () => {
   img.src = URL.createObjectURL(
     event.target.files[0]
   );
+
+};
+window.saveProfileImage = async function(event){
+
+  let image = event.target.files[0];
+
+  if(!image) return;
+
+  try {
+
+    let imageRef = ref(
+      storage,
+      `profilePics/${currentUser}`
+    );
+
+    await uploadBytes(imageRef, image);
+
+    let url = await getDownloadURL(imageRef);
+
+    await setDoc(doc(db,"users",currentUser),{
+      profile:url
+    });
+
+    document.getElementById("profilePic").src = url;
+
+    alert("Profile saved!");
+
+  } catch(e){
+    alert(e.message);
+  }
 
 };
