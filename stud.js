@@ -126,15 +126,15 @@ window.loadTasks = async function () {
     list.appendChild(div);
   });
 };
-
+ 
 window.deleteTask = async function (id) {
   await deleteDoc(doc(db, "tasks", id));
   loadTasks();
 };
 
 // ================= FILE UPLOAD (STORAGE) =================
-window.uploadFile = function () {
- window.uploadFile = async function () {
+// ================= FILE UPLOAD (STORAGE) =================
+window.uploadFile = async function () {
 
   let file = document.getElementById("fileUpload").files[0];
 
@@ -153,13 +153,13 @@ window.uploadFile = function () {
     await addDoc(collection(db, "files"), {
       user: currentUser,
       name: file.name,
-      url:url
+      url: url
     });
 
     alert("Uploaded!");
     loadFiles();
 
-  } catch(e){
+  } catch(e) {
     alert(e.message);
   }
 };
