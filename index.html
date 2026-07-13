@@ -15,49 +15,45 @@
 
         <h2>📚 Abel Study Planner</h2>
 
-        <input type="text"
-        id="username"
-        placeholder="Username">
+        <input type="text" id="username" placeholder="Email">
 
-        <input type="password"
-        id="password"
-        placeholder="Password">
+        <input type="password" id="password" placeholder="Password">
 
-        <button id="loginBtn" onclick="login()">Login</button>
-
-        <p id="error" style="color:red;"></p>
+        <button onclick="login()">Login</button>
 
     </div>
 
-    <button class="signup-btn"
-    onclick="showSignup()">
-    Create Account
+    <button class="signup-btn" onclick="showSignup()">
+        Create Account
     </button>
- </div>
+
+</div>   <!-- AHA ni ho wari wabuze -->
+
+
 
 <div id="signupPage"
 class="login-page"
-style="display:none;"
+style="display:none;">
 
     <div class="login-box">
 
         <h2>Create Account</h2>
 
-        <input type="text"
-        id="newUser"
-        placeholder="Username">
+        <input type="text" id="newUser" placeholder="Email">
 
-        <input type="password"
-        id="newPass"
-        placeholder="Password">
+        <input type="password" id="newPass" placeholder="Password">
 
         <button onclick="signup()">
-        Register
+            Register
         </button>
 
         <button onclick="showLogin()">
-        Back to Login
+            Back to Login
         </button>
+
+    </div>
+
+</div>
 <!-- STUDY PLANNER -->
 
 <div class="container"
