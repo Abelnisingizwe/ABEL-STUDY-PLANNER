@@ -222,7 +222,7 @@ window.saveProfileImage = async function(event){
 
     let imageRef = ref(
       storage,
-      `profilePics/${currentUser}`
+      `profilePics/${currentUser}/${image.name}`
     );
 
     await uploadBytes(imageRef, image);
