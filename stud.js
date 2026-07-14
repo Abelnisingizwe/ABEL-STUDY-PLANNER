@@ -206,7 +206,7 @@ window.addEventListener("DOMContentLoaded", () => {
   auth.onAuthStateChanged((user)=>{
 
     if(user){
-      currentUser = user.uid;
+      currentUser = user.email;
     }
 
   });
