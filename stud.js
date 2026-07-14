@@ -202,17 +202,16 @@ window.deleteFile = async function (id) {
 
 // ================= AUTO LOGIN =================
 window.addEventListener("DOMContentLoaded", () => {
-  currentUser = auth.currentUser?.email || null;
+
+  auth.onAuthStateChanged((user)=>{
+
+    if(user){
+      currentUser = user.uid;
+    }
+
+  });
+
 });
-  window.loadImage = function(event){
-
-  let img = document.getElementById("profilePic");
-
-  img.src = URL.createObjectURL(
-    event.target.files[0]
-  );
-
-};
 window.saveProfileImage = async function(event){
 
   let image = event.target.files[0];
