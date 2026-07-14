@@ -50,7 +50,7 @@ window.login = async function () {
   try {
     let res = await signInWithEmailAndPassword(auth, email, password);
 
-   currentUser = res.user.uid;
+   currentUser = res.user.email;
 
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("planner").style.display = "block";
