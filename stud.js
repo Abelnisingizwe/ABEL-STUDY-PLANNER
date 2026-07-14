@@ -218,27 +218,61 @@ window.saveProfileImage = async function(event){
 
   if(!image) return;
 
-  try {
+  if(!currentUser){
+    alert("Login first!");
+    return;
+  }
 
-    let imageRef = ref(
-      storage,
-      `profilePics/${currentUser}/${image.name}`
-    );
+  let reader = new FileReader();
 
-    await uploadBytes(imageRef, image);
+  reader.onload = async function(){
 
-    let url = await getDownloadURL(imageRef);
+    let imageData = reader.result;
 
-    await setDoc(doc(db,"users",currentUser),{
-      profile:url
-    });
+    try {
 
-    document.getElementById("profilePic").src = url;
+      await setDoc(
+        doc(db,"users",currentUser),
+        {
+          profile:imageData
+        },
+        { merge:true }
+      );
 
-    alert("Profile saved!");
+      document.getElementById("profilePic").src = imageData;
 
-  } catch(e){
-    alert(e.message);
+      alert("Profile saved!");
+
+    } catch(e){
+
+      alert(e.message);
+
+    }
+
+  };
+
+  reader.readAsDataURL(image);
+
+};
+window.loadProfileImage = async function(){
+
+  if(!currentUser) return;
+
+  let userDoc = await getDoc(
+    doc(db,"users",currentUser)
+  );
+
+  if(userDoc.exists()){
+
+    let data = userDoc.data();
+
+    if(data.profile){
+
+      document.getElementById("profilePic").src =
+      data.profile;
+
+    }
+
   }
 
 };
