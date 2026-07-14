@@ -138,34 +138,72 @@ window.deleteTask = async function (id) {
 
 // ================= FILE UPLOAD (STORAGE) =================
 // ================= FILE UPLOAD (STORAGE) =================
+// ================= FILE UPLOAD =================
+
 window.uploadFile = async function () {
 
-  let file = document.getElementById("fileUpload").files[0];
+  console.log("Upload button clicked");
 
-  if (!file) return alert("Select file!");
+  let fileInput = document.getElementById("fileUpload");
+  let file = fileInput.files[0];
 
-  if (!currentUser) return alert("Login first!");
+  console.log("Selected file:", file);
+
+  if (!file) {
+    alert("Hitamo file mbere!");
+    return;
+  }
+
+  console.log("Current user:", currentUser);
+
+  if (!currentUser) {
+    alert("Login first!");
+    return;
+  }
 
   try {
 
-    let storageRef = ref(storage, `files/${currentUser}/${file.name}`);
+    console.log("Starting upload...");
+
+    let storageRef = ref(
+      storage,
+      `files/${currentUser}/${file.name}`
+    );
+
+    console.log("Storage path created");
 
     await uploadBytes(storageRef, file);
 
+    console.log("File uploaded to Storage");
+
     let url = await getDownloadURL(storageRef);
+
+    console.log("Download URL:", url);
+
 
     await addDoc(collection(db, "files"), {
       user: currentUser,
       name: file.name,
-      url: url
+      url: url,
+      createdAt: new Date()
     });
 
-    alert("Uploaded!");
+
+    console.log("Saved to Firestore");
+
+    alert("Upload yakoze neza!");
+
     loadFiles();
 
+
   } catch(e) {
+
+    console.error("UPLOAD ERROR:", e);
+
     alert(e.message);
+
   }
+
 };
 
 // ================= LOAD FILES =================
