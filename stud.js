@@ -60,6 +60,7 @@ window.login = async function () {
 
     loadTasks();
     loadFiles();
+    loadProfileImage();
 
   } catch (e) {
     alert(e.message);
