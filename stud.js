@@ -1,4 +1,4 @@
-﻿import { auth, db, storage } from "./firebase.js";
+import { auth, db, storage } from "./firebase.js";
 
 import {
   createUserWithEmailAndPassword,
@@ -137,68 +137,91 @@ window.deleteTask = async function (id) {
 };
 
 // ================= FILE UPLOAD (STORAGE) =================
-// ================= FILE UPLOAD (STORAGE) =================
-// ================= FILE UPLOAD =================
+// ================= GOOGLE DRIVE UPLOAD =================
 
 window.uploadFile = async function () {
 
-  console.log("Upload button clicked");
-
   let fileInput = document.getElementById("fileUpload");
   let file = fileInput.files[0];
-
-  console.log("Selected file:", file);
 
   if (!file) {
     alert("Hitamo file mbere!");
     return;
   }
 
-  console.log("Current user:", currentUser);
-
-  if (!currentUser) {
-    alert("Login first!");
+  if (!googleToken) {
+    alert("Banza uhuze Google Drive!");
     return;
   }
 
   try {
 
-    console.log("Starting upload...");
+    let metadata = {
+      name: file.name
+    };
 
-    let storageRef = ref(
-      storage,
-      `files/${currentUser}/${file.name}`
+    let form = new FormData();
+
+    form.append(
+      "metadata",
+      new Blob(
+        [JSON.stringify(metadata)],
+        {type:"application/json"}
+      )
     );
 
-    console.log("Storage path created");
-
-    await uploadBytes(storageRef, file);
-
-    console.log("File uploaded to Storage");
-
-    let url = await getDownloadURL(storageRef);
-
-    console.log("Download URL:", url);
+    form.append(
+      "file",
+      file
+    );
 
 
-    await addDoc(collection(db, "files"), {
+    let response = await fetch(
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+      {
+        method:"POST",
+
+        headers:{
+          Authorization:
+          "Bearer " + googleToken
+        },
+
+        body: form
+      }
+    );
+
+
+   console.log("Status:", response.status);
+
+let data = await response.json();
+
+console.log("Drive file:", data);
+
+if (!response.ok) {
+  throw new Error(JSON.stringify(data));
+}
+
+    await addDoc(collection(db,"files"),{
+
       user: currentUser,
-      name: file.name,
-      url: url,
-      createdAt: new Date()
+
+      name:file.name,
+
+      driveId:data.id,
+
+      createdAt:new Date()
+
     });
 
 
-    console.log("Saved to Firestore");
-
-    alert("Upload yakoze neza!");
+    alert("File yashyizwe kuri Google Drive neza!");
 
     loadFiles();
 
 
-  } catch(e) {
+  } catch(e){
 
-    console.error("UPLOAD ERROR:", e);
+    console.error(e);
 
     alert(e.message);
 
@@ -225,32 +248,81 @@ window.loadFiles = async function () {
 
     div.innerHTML = `
       <p>📁 ${f.name}</p>
-      <a href="${f.url}" target="_blank">Open</a>
-      <button onclick="deleteFile('${docSnap.id}')">Delete</button>
+      <button onclick="openDriveFile('${f.driveId}','${f.name}')">
+ Open
+</button>
+      <button onclick="deleteFile('${docSnap.id}','${f.driveId}')">
+Delete
+</button>
     `;
 
     container.appendChild(div);
   });
 };
+window.openDriveFile = function(driveId) {
 
-// ================= DELETE FILE =================
-window.deleteFile = async function (id) {
-  await deleteDoc(doc(db, "files", id));
-  loadFiles();
+    const viewer = document.getElementById("pdfFrame");
+
+    viewer.src =
+      `https://drive.google.com/file/d/${driveId}/preview`;
+
 };
+// ================= DELETE FILE =================
+window.deleteFile = async function (docId, driveId) {
 
-// ================= AUTO LOGIN =================
-window.addEventListener("DOMContentLoaded", () => {
+  let confirmDelete = confirm(
+    "Urashaka koko gusiba iyi file? Izasibika no muri Google Drive."
+  );
 
-  auth.onAuthStateChanged((user)=>{
+  if(!confirmDelete){
+    return;
+  }
 
-    if(user){
-      currentUser = user.email;
+  try {
+
+    console.log("Drive ID:", driveId);
+console.log("Token exists:", googleToken ? "YES" : "NO");
+
+    let response = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${driveId}`,
+      {
+        method:"DELETE",
+        headers:{
+          Authorization:`Bearer ${googleToken}`
+        }
+      }
+    );
+
+
+    console.log("Delete status:", response.status);
+
+
+    if(!response.ok){
+      throw new Error(
+        "Google Drive delete failed: " + response.status
+      );
     }
 
-  });
 
-});
+    await deleteDoc(
+      doc(db,"files",docId)
+    );
+
+
+    alert("File yasibwe neza!");
+
+    loadFiles();
+
+
+  } catch(e){
+
+    console.error("DELETE ERROR:", e);
+
+    alert(e.message);
+
+  }
+
+};
 window.saveProfileImage = async function(event){
 
   let image = event.target.files[0];
@@ -313,5 +385,37 @@ window.loadProfileImage = async function(){
     }
 
   }
+
+};
+// ================= GOOGLE DRIVE =================
+
+const GOOGLE_CLIENT_ID = "197520392155-8q2vd42n99lddka1endcbnus6otvdjg8.apps.googleusercontent.com";
+
+let googleToken = localStorage.getItem("googleToken");
+window.connectDrive = function () {
+
+  google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+
+   scope:
+ "https://www.googleapis.com/auth/drive",
+
+
+    callback: (response) => {
+
+     googleToken = response.access_token;
+     localStorage.setItem("googleToken", googleToken);
+
+localStorage.setItem(
+  "googleToken",
+  googleToken
+);
+      alert("Google Drive yahujwe neza!");
+
+      console.log("Drive token:", googleToken);
+
+    }
+
+  }).requestAccessToken();
 
 };
