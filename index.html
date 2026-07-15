@@ -80,11 +80,6 @@ style="display:none;">
         accept="image/*"
         onchange="saveProfileImage(event)">
     </div>
-
-    <marquee>
-        <p id="quote"></p>
-    </marquee>
-
     <div class="header">
         <h1>📚 Abel Study Planner</h1>
         <p>University + Project Manager</p>
@@ -171,6 +166,9 @@ style="display:none;">
 
     <h2>My Study Materials</h2>
 <div id="fileList"></div>
+<button onclick="deleteSelectedFiles()">
+  Delete Selected
+</button>
 
 </div>
     <div class="card">
