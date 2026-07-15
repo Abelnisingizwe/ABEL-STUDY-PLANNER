@@ -175,7 +175,9 @@ window.uploadFile = async function () {
       file
     );
 
-
+console.log(file.name);
+console.log(file.type);
+console.log(file.size);
     let response = await fetch(
       "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
       {
@@ -234,30 +236,46 @@ window.loadFiles = async function () {
   let container = document.getElementById("fileList");
   container.innerHTML = "";
 
-  const q = query(
-    collection(db, "files"),
-    where("user", "==", currentUser)
-  );
+  try {
 
-  let snapshot = await getDocs(q);
+    console.log("Current user:", currentUser);
 
-  snapshot.forEach((docSnap) => {
-    let f = docSnap.data();
+    const q = query(
+      collection(db, "files"),
+      where("user", "==", currentUser)
+    );
 
-    let div = document.createElement("div");
+    let snapshot = await getDocs(q);
 
-    div.innerHTML = `
-      <p>📁 ${f.name}</p>
-      <button onclick="openDriveFile('${f.driveId}','${f.name}')">
- Open
-</button>
-      <button onclick="deleteFile('${docSnap.id}','${f.driveId}')">
-Delete
-</button>
-    `;
+    console.log("Files found:", snapshot.size);
 
-    container.appendChild(div);
-  });
+    snapshot.forEach((docSnap) => {
+
+      let f = docSnap.data();
+
+      let div = document.createElement("div");
+
+      div.innerHTML = `
+        <p>📁 ${f.name}</p>
+        <button onclick="openDriveFile('${f.driveId}','${f.name}')">
+          Open
+        </button>
+
+        <button onclick="deleteFile('${docSnap.id}','${f.driveId}')">
+          Delete
+        </button>
+      `;
+
+      container.appendChild(div);
+
+    });
+
+  } catch(error) {
+
+    console.error("LOAD FILES ERROR:", error);
+    alert(error.message);
+
+  }
 };
 window.openDriveFile = function(driveId) {
 
@@ -321,6 +339,57 @@ console.log("Token exists:", googleToken ? "YES" : "NO");
     alert(e.message);
 
   }
+
+};
+window.deleteSelectedFiles = async function(){
+
+  let selected = document.querySelectorAll(".fileCheck:checked");
+
+  if(selected.length === 0){
+    alert("Hitamo files ubanze!");
+    return;
+  }
+
+  let confirmDelete = confirm(
+    `Urashaka gusiba ${selected.length} files?`
+  );
+
+  if(!confirmDelete) return;
+
+
+  for(let item of selected){
+
+    let docId = item.dataset.id;
+    let driveId = item.dataset.drive;
+
+    try{
+
+      await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveId}`,
+        {
+          method:"DELETE",
+          headers:{
+            Authorization:`Bearer ${googleToken}`
+          }
+        }
+      );
+
+
+      await deleteDoc(
+        doc(db,"files",docId)
+      );
+
+    }catch(error){
+
+      console.error("Delete error:", error);
+
+    }
+  }
+
+
+  alert("Files zasibwe neza!");
+
+  loadFiles();
 
 };
 window.saveProfileImage = async function(event){
