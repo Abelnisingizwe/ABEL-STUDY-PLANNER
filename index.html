@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -163,21 +163,26 @@ style="display:none;">
     <button onclick="uploadFile()" class="main-btn">
         Upload File
     </button>
+    <br><br>
+
+<button onclick="connectDrive()" class="main-btn">
+    🔗 Connect Google Drive
+</button>
 
     <h2>My Study Materials</h2>
 <div id="fileList"></div>
-<button onclick="openSavedPDF(0)">
-    Open PDF (test)
-</button>
 
 </div>
-<div class="card">
-    <h3>URWIBUTSO TV</h3>
+    <div class="card">
+    <h3>📺 URWIBUTSO TV</h3>
 
+    <!-- PDF / Google Drive -->
     <iframe
         id="pdfFrame"
         style="width:100%;height:500px;border:none;">
     </iframe>
+
+    <!-- Image -->
 
 </div>
 <button class="main-btn logout-btn"
@@ -185,6 +190,7 @@ style="display:none;">
         Logout
         </button>
 <p id="clock"></p>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <script type="module" src="stud.js"></script>
 </body>
 </html>
