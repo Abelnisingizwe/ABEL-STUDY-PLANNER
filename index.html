@@ -13,6 +13,8 @@
 
 <meta name="author" content="Abel Nisingizwe">
 <link rel="stylesheet"href="stud.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/logo.png" type="image/png">
 </head>
 <body>
 <!-- LOGIN PAGE -->
@@ -81,74 +83,49 @@ style="display:none;">
         onchange="saveProfileImage(event)">
     </div>
     <div class="header">
-        <h1>📚 Abel Study Planner</h1>
-        <p>University + Project Manager</p>
-    </div>
+    <img src="images/logo.png"
+         alt="Abel Study Planner Logo"
+         width="80">
+
+    <h1>Abel Study Planner</h1>
+    <p>University + Project Manager</p>
+</div>
 
    <div class="card">
 
     <h2>📅 IBIKORWA MFITE GUKORA MURI IKI CYUMWERU</h2>
 
-    <input
-        type="text"
-        id="taskName"
-        placeholder="Andika igikorwa..."
-    >
+    <label>Igikorwa:</label>
+<input 
+ type="text" 
+ id="taskName" 
+ placeholder="Andika igikorwa..."
+>
+
 <br><br>
 
+<label>Isaha:</label>
+<input 
+ type="time" 
+ id="taskTime">
 
-<label>Itariki:</label>
-    <input type="date" id="taskDate">
+ <label>Ukwezi:</label>
+<input 
+ type="month" 
+ id="taskMonth"
+>
 
- 
+<br><br>
 
-    <br><br>
-
-    <label>Isaha:</label>
-
-    <select id="taskHour">
-<option value="01">01</option>
-        <option value="08">08</option>
-        <option value="09">09</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-    </select>
-
-    <label>Iminota:</label>
-
-    <select id="taskMinute">
-        <option value="00">00</option>
-        <option value="05">05</option>
-        <option value="10">10</option>
-        <option value="15">15</option>
-        <option value="20">20</option>
-        <option value="25">25</option>
-        <option value="30">30</option>
-        <option value="35">35</option>
-        <option value="40">40</option>
-        <option value="45">45</option>
-        <option value="50">50</option>
-        <option value="55">55</option>
-    </select>
-
-    <br><br>
-
-    <button class="main-btn" onclick="addTask()">
-        ➕ Add Task
-    </button>
-
-</div>
+<button class="main-btn" onclick="addTask()">
+➕ Add Task
+</button></div>
 
     <div class="card">
         <h2>My Tasks</h2>
         <div id="taskList"></div>
+        <ul id="taskList"></ul>
+<button onclick="deleteSelectedTasks()">Delete Selected Tasks</button>
     </div>
 <div class="card">
 
@@ -167,9 +144,8 @@ style="display:none;">
     <h2>My Study Materials</h2>
 <div id="fileList"></div>
 <button onclick="deleteSelectedFiles()">
-  Delete Selected
+Delete Selected Files
 </button>
-
 </div>
     <div class="card">
     <h3>📺 URWIBUTSO TV</h3>
@@ -189,6 +165,13 @@ style="display:none;">
         </button>
 <p id="clock"></p>
 <script src="https://accounts.google.com/gsi/client" async></script>
+<script src="db.js"></script>
 <script type="module" src="stud.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 </body>
 </html>
+
