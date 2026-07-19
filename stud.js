@@ -1,6 +1,6 @@
-import { auth, db, storage } from "./firebase.js";
+import { auth, db, storage, messaging } from "./firebase.js";
 
-import {
+import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut
@@ -19,10 +19,66 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  getToken
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+async function requestNotificationPermission() {
+
+  try {
+
+    const permission = await Notification.requestPermission();
+
+    if(permission === "granted"){
+
+      console.log("Notification permission granted");
+
+
+      const registration = await navigator.serviceWorker.register(
+        "firebase-messaging-sw.js"
+      );
+
+
+      const token = await getToken(messaging,{
+        vapidKey:"BBx_zJTcCHfRG5AM7YmbU45d7PSYUBHfZk2-DVuyhAyM-ybpG-MMhVX_YGRgMTam7r2Lzv7xETMz1XJROD4mRf8",
+        serviceWorkerRegistration:registration
+      });
+
+
+      console.log("FCM Token:",token);
+
+
+      // SAVE TOKEN
+      if(auth.currentUser){
+
+        await setDoc(
+          doc(db,"users",auth.currentUser.email),
+          {
+            fcmToken:token
+          },
+          {
+            merge:true
+          }
+        );
+
+
+        console.log("Token saved to Firestore");
+
+      }
+
+
+    }else{
+
+      console.log("Permission denied");
+
+    }
+
+
+  }catch(error){
+
+    console.error("Notification error:",error);
+
+  }
+
+}
 // ================= USER =================
 let currentUser = null;
 
@@ -51,6 +107,8 @@ window.login = async function () {
     let res = await signInWithEmailAndPassword(auth, email, password);
 
    currentUser = res.user.email;
+
+requestNotificationPermission();
 
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("planner").style.display = "block";
@@ -84,29 +142,54 @@ window.showLogin = function () {
   document.getElementById("loginPage").style.display = "block";
 };
 
-// ================= TASKS (FIRESTORE) =================
+// ================= ADD TASK =================
 window.addTask = async function () {
-  let task = document.getElementById("taskName").value;
-  let date = document.getElementById("taskDate").value;
-  let hour = document.getElementById("taskHour").value;
-  let minute = document.getElementById("taskMinute").value;
 
-  if (!task || !date) return alert("Fill all fields!");
+  let task = document.getElementById("taskName").value;
+  let time = document.getElementById("taskTime").value;
+  let month = document.getElementById("taskMonth").value;
+
+  if (!task || !time || !month) {
+    alert("Uzuza igikorwa, isaha n'ukwezi!");
+    return;
+  }
 
   try {
+
     await addDoc(collection(db, "tasks"), {
+
       user: currentUser,
-      task,
-      time: `${date} ${hour}:${minute}`
+
+      task: task,
+
+      month: month,
+
+      time: time,
+
+      createdAt: new Date()
+
     });
 
-    loadTasks();
-  } catch (e) {
-    alert(e.message);
-  }
-};
 
+    alert("Task yongewemo neza!");
+
+    // gusiba ibyo user yari yanditse
+    document.getElementById("taskName").value = "";
+    document.getElementById("taskTime").value = "";
+    document.getElementById("taskMonth").value = "";
+
+    loadTasks();
+
+
+  } catch (e) {
+
+    alert(e.message);
+
+  }
+
+};
 window.loadTasks = async function () {
+
   let list = document.getElementById("taskList");
   list.innerHTML = "";
 
@@ -118,22 +201,65 @@ window.loadTasks = async function () {
   let snapshot = await getDocs(q);
 
   snapshot.forEach((docSnap) => {
+
     let data = docSnap.data();
 
     let div = document.createElement("div");
 
     div.innerHTML = `
-      <p><b>${data.task}</b> - ${data.time}</p>
-      <button onclick="deleteTask('${docSnap.id}')">Delete</button>
+      <input type="checkbox" class="taskCheck" value="${docSnap.id}">
+      ${data.task} - ${data.month} - ${data.time}
     `;
 
     list.appendChild(div);
+
   });
 };
- 
-window.deleteTask = async function (id) {
-  await deleteDoc(doc(db, "tasks", id));
+window.deleteSelectedTasks = async function () {
+
+  const checked = document.querySelectorAll(".taskCheck:checked");
+
+  for (const item of checked) {
+
+    await deleteDoc(
+      doc(db, "tasks", item.value)
+    );
+
+  }
+
+  alert("Selected tasks deleted!");
+
   loadTasks();
+};
+window.deleteSelectedFiles = async function(){
+
+  const checked = document.querySelectorAll(".fileCheck:checked");
+
+  for(const file of checked){
+
+    let docId = file.value;
+    let driveId = file.dataset.drive;
+
+    await fetch(
+      `https://www.googleapis.com/drive/v3/files/${driveId}`,
+      {
+        method:"DELETE",
+        headers:{
+          Authorization:`Bearer ${googleToken}`
+        }
+      }
+    );
+
+    await deleteDoc(
+      doc(db,"files",docId)
+    );
+
+  }
+
+  alert("Selected files deleted!");
+
+  loadFiles();
+
 };
 
 // ================= FILE UPLOAD (STORAGE) =================
@@ -233,6 +359,7 @@ if (!response.ok) {
 
 // ================= LOAD FILES =================
 window.loadFiles = async function () {
+
   let container = document.getElementById("fileList");
   container.innerHTML = "";
 
@@ -256,14 +383,21 @@ window.loadFiles = async function () {
       let div = document.createElement("div");
 
       div.innerHTML = `
-        <p>📁 ${f.name}</p>
-        <button onclick="openDriveFile('${f.driveId}','${f.name}')">
+
+        <input 
+          type="checkbox" 
+          class="fileCheck"
+          value="${docSnap.id}"
+          data-drive="${f.driveId}">
+
+        📁 <b>${f.name}</b>
+
+        <button onclick="openDriveFile('${f.driveId}')">
           Open
         </button>
 
-        <button onclick="deleteFile('${docSnap.id}','${f.driveId}')">
-          Delete
-        </button>
+        <br><br>
+
       `;
 
       container.appendChild(div);
@@ -276,6 +410,7 @@ window.loadFiles = async function () {
     alert(error.message);
 
   }
+
 };
 window.openDriveFile = function(driveId) {
 
@@ -341,57 +476,7 @@ console.log("Token exists:", googleToken ? "YES" : "NO");
   }
 
 };
-window.deleteSelectedFiles = async function(){
 
-  let selected = document.querySelectorAll(".fileCheck:checked");
-
-  if(selected.length === 0){
-    alert("Hitamo files ubanze!");
-    return;
-  }
-
-  let confirmDelete = confirm(
-    `Urashaka gusiba ${selected.length} files?`
-  );
-
-  if(!confirmDelete) return;
-
-
-  for(let item of selected){
-
-    let docId = item.dataset.id;
-    let driveId = item.dataset.drive;
-
-    try{
-
-      await fetch(
-        `https://www.googleapis.com/drive/v3/files/${driveId}`,
-        {
-          method:"DELETE",
-          headers:{
-            Authorization:`Bearer ${googleToken}`
-          }
-        }
-      );
-
-
-      await deleteDoc(
-        doc(db,"files",docId)
-      );
-
-    }catch(error){
-
-      console.error("Delete error:", error);
-
-    }
-  }
-
-
-  alert("Files zasibwe neza!");
-
-  loadFiles();
-
-};
 window.saveProfileImage = async function(event){
 
   let image = event.target.files[0];
