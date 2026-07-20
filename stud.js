@@ -573,3 +573,35 @@ localStorage.setItem(
   }).requestAccessToken();
 
 };
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    const installBtn = document.getElementById("installBtn");
+
+    if (installBtn) {
+        installBtn.style.display = "block";
+    }
+
+});
+
+
+document.getElementById("installBtn")?.addEventListener("click", async () => {
+
+    if (!deferredPrompt) {
+        return;
+    }
+
+    deferredPrompt.prompt();
+
+    const result = await deferredPrompt.userChoice;
+
+    console.log("Install choice:", result.outcome);
+
+    deferredPrompt = null;
+
+});
