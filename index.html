@@ -15,9 +15,6 @@
 <link rel="stylesheet"href="stud.css">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="images/logo.png" type="image/png">
- <button id="installBtn" class="main-btn" style="display:none;">
-📲 Install Abel Study Planner
- </button>
 </head>
 <body>
 <!-- LOGIN PAGE -->
@@ -107,16 +104,8 @@ style="display:none;">
 
 <br><br>
 
-<label>Isaha:</label>
-<input 
- type="time" 
- id="taskTime">
-
- <label>Ukwezi:</label>
-<input 
- type="month" 
- id="taskMonth"
->
+<label>Date & Time</label>
+<input type="datetime-local" id="taskDateTime">
 
 <br><br>
 
@@ -126,14 +115,13 @@ style="display:none;">
 
     <div class="card">
         <h2>My Tasks</h2>
-        <div id="taskList"></div>
-        <ul id="taskList"></ul>
+        <div id="taskList"></div>c
 <button onclick="deleteSelectedTasks()">Delete Selected Tasks</button>
     </div>
 <div class="card">
 
     <h2>SHYIRAMO NOTE</h2>
-<input type="file" id="fileUpload" accept="*/*">
+<incput type="file" id="fileUpload" accept="*/*">
 
     <button onclick="uploadFile()" class="main-btn">
         Upload File
@@ -177,4 +165,3 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
-
