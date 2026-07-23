@@ -144,50 +144,34 @@ window.showLogin = function () {
 
 // ================= ADD TASK =================
 window.addTask = async function () {
-
   let task = document.getElementById("taskName").value;
-  let time = document.getElementById("taskTime").value;
-  let month = document.getElementById("taskMonth").value;
+  let dateTime = document.getElementById("taskDateTime").value;
 
-  if (!task || !time || !month) {
-    alert("Uzuza igikorwa, isaha n'ukwezi!");
+  if (!task || !dateTime) {
+    alert("Uzuza amakuru yose!");
     return;
   }
 
   try {
-
     await addDoc(collection(db, "tasks"), {
-
       user: currentUser,
-
       task: task,
-
-      month: month,
-
-      time: time,
-
+      dateTime: dateTime,
       createdAt: new Date()
-
     });
-
 
     alert("Task yongewemo neza!");
 
-    // gusiba ibyo user yari yanditse
     document.getElementById("taskName").value = "";
-    document.getElementById("taskTime").value = "";
-    document.getElementById("taskMonth").value = "";
+    document.getElementById("taskDateTime").value = "";
 
     loadTasks();
 
-
   } catch (e) {
-
     alert(e.message);
-
   }
-
 };
+
 window.loadTasks = async function () {
 
   let list = document.getElementById("taskList");
@@ -207,9 +191,9 @@ window.loadTasks = async function () {
     let div = document.createElement("div");
 
     div.innerHTML = `
-      <input type="checkbox" class="taskCheck" value="${docSnap.id}">
-      ${data.task} - ${data.month} - ${data.time}
-    `;
+<input type="checkbox" class="taskCheck" value="${docSnap.id}">
+${data.task} - ${data.dateTime}
+`;
 
     list.appendChild(div);
 
@@ -573,35 +557,3 @@ localStorage.setItem(
   }).requestAccessToken();
 
 };
-let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt", (event) => {
-
-    event.preventDefault();
-
-    deferredPrompt = event;
-
-    const installBtn = document.getElementById("installBtn");
-
-    if (installBtn) {
-        installBtn.style.display = "block";
-    }
-
-});
-
-
-document.getElementById("installBtn")?.addEventListener("click", async () => {
-
-    if (!deferredPrompt) {
-        return;
-    }
-
-    deferredPrompt.prompt();
-
-    const result = await deferredPrompt.userChoice;
-
-    console.log("Install choice:", result.outcome);
-
-    deferredPrompt = null;
-
-});
