@@ -9,18 +9,12 @@ importScripts(
 
 firebase.initializeApp({
 
-apiKey: "YOUR_API_KEY",
-
-authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-projectId: "YOUR_PROJECT_ID",
-
-storageBucket: "YOUR_PROJECT.appspot.com",
-
-messagingSenderId: "YOUR_SENDER_ID",
-
-appId: "YOUR_APP_ID"
-
+ apiKey: "AIzaSyBLOa2endiRKtEB3uN--LtrgQjRtVsHz_A",
+  authDomain: "abel-study-planner.firebaseapp.com",
+  projectId: "abel-study-planner",
+  storageBucket: "abel-study-planner.firebasestorage.app",
+messagingSenderId: "75345755224",
+  appId: "1:75345755224:web:061e4e1ea46b30a0375e2d"
 });
 
 
