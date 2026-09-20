@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Abel Study Planner - Student and Teacher Management System</title>
+
+<meta name="description" content="Abel Study Planner is a smart platform for students and teachers to manage tasks, study materials, timetables, lesson plans, class diaries and academic activities.">
+
+<meta name="keywords" content="Abel Study Planner, student planner, teacher planner, lesson plan, class diary, study materials, Rwanda education technology">
+
+<meta name="author" content="Abel Nisingizwe">
+<link rel="stylesheet"href="stud.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/logo.png" type="image/png">
+</head>
+<body>
+<!-- LOGIN PAGE -->
+ 
+<div id="loginPage" class="login-page">
+
+    <div class="login-box">
+
+        <h2>📚 Abel Study Planner</h2>
+
+        <input type="text" id="username" placeholder="Email">
+
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+    </div>
+
+    <button class="signup-btn" onclick="showSignup()">
+        Create Account
+    </button>
+
+</div>   <!-- AHA ni ho wari wabuze -->
+
+
+
+<div id="signupPage"
+class="login-page"
+style="display:none;">
+
+    <div class="login-box">
+
+        <h2>Create Account</h2>
+
+        <input type="text" id="newUser" placeholder="Email">
+
+        <input type="password" id="newPass" placeholder="Password">
+
+        <button onclick="signup()">
+            Register
+        </button>
+
+        <button onclick="showLogin()">
+            Back to Login
+        </button>
+
+    </div>
+
+</div>
+<!-- STUDY PLANNER -->
+
+<div class="container"
+id="planner"
+style="display:none;">
+
+    <h2 id="welcomeUser"></h2>
+
+    <div class="profile">
+        <img id="profilePic"
+        src="https://via.placeholder.com/100"
+        alt="Profile">
+
+        <input type="file"
+        id="fileInput"
+        accept="image/*"
+        onchange="saveProfileImage(event)">
+    </div>
+    <div class="header">
+    <img src="images/logo.png"
+         alt="Abel Study Planner Logo"
+         width="80">
+
+    <h1>Abel Study Planner</h1>
+    <p>University + Project Manager</p>
+</div>
+
+   <div class="card">
+
+    <h2>📅 IBIKORWA MFITE GUKORA MURI IKI CYUMWERU</h2>
+
+    <label>Igikorwa:</label>
+<input 
+ type="text" 
+ id="taskName" 
+ placeholder="Andika igikorwa..."
+>
+
+<br><br>
+
+<label>Date & Time</label>
+<input type="datetime-local" id="taskDateTime">
+
+<br><br>
+
+<button class="main-btn" onclick="addTask()">
+➕ Add Task
+</button></div>
+
+    <div class="card">
+        <h2>My Tasks</h2>
+        <div id="taskList"></div>c
+<button onclick="deleteSelectedTasks()">Delete Selected Tasks</button>
+    </div>
+<div class="card">
+
+    <h2>SHYIRAMO NOTE</h2>
+    <input type="file" id="fileUpload" accept="*/*">
+
+    <button onclick="uploadFile()" class="main-btn">
+        Upload File
+    </button>
+    <br><br>
+
+<button onclick="connectDrive()" class="main-btn">
+    🔗 Connect Google Drive
+</button>
+
+    <h2>My Study Materials</h2>
+<div id="fileList"></div>
+<button onclick="deleteSelectedFiles()">
+Delete Selected Files
+</button>
+</div>
+
+<!-- PERSONAL REMINDERS -->
+
+<div class="card">
+
+    <h2>🔔 PERSONAL REMINDERS</h2>
+
+    <label>Reminder Title:</label>
+
+    <input
+        type="text"
+        id="reminderTitle"
+        placeholder="Urugero: Birthday ya Mama"
+    >
+
+    <br><br>
+
+    <label>Description:</label>
+
+    <textarea
+        id="reminderDescription"
+        placeholder="Andika ibisobanuro..."
+    ></textarea>
+
+    <br><br>
+
+    <label>Date:</label>
+
+    <input
+        type="date"
+        id="reminderDate"
+    >
+
+    <br><br>
+
+    <label>Time:</label>
+
+    <input
+        type="time"
+        id="reminderTime"
+    >
+
+    <br><br>
+
+    <label>Remind me before:</label>
+
+    <select id="reminderBefore">
+
+        <option value="10_minutes">
+            10 Minutes before
+        </option>
+
+        <option value="1_hour">
+            1 Hour before
+        </option>
+
+        <option value="1_day">
+            1 Day before
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <label>Repeat:</label>
+
+    <select id="reminderRepeat">
+
+        <option value="none">
+            Doesn't repeat
+        </option>
+
+        <option value="daily">
+            Every day
+        </option>
+
+        <option value="weekly">
+            Every week
+        </option>
+
+        <option value="monthly">
+            Every month
+        </option>
+
+        <option value="yearly">
+            Every year
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <button
+        class="main-btn"
+        onclick="addReminder()"
+    >
+        🔔 Add Reminder
+    </button>
+
+    <br><br>
+
+    <h3>My Reminders</h3>
+
+    <div id="reminderList"></div>
+
+</div>
+    
+<div class="card">
+    <h3>📺 URWIBUTSO TV</h3>
+
+    <!-- PDF / Google Drive -->
+    <iframe
+        id="pdfFrame"
+        style="width:100%;height:500px;border:none;">
+    </iframe>
+
+    <!-- Image -->
+
+</div>
+<button class="main-btn logout-btn"
+        onclick="logout()">
+        Logout
+        </button>
+<p id="clock"></p>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="db.js"></script>
+<script type="module" src="stud.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>

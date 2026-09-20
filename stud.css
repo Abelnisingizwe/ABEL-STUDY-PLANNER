@@ -1,0 +1,404 @@
+﻿/* =========================
+   RESET + GLOBAL
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", Arial, sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(-45deg, #4a6cf7, #6f42c1, #00c9ff, #92fe9d);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+}
+
+/* =========================
+   BACKGROUND ANIMATION
+========================= */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* =========================
+   LOGIN PAGE
+========================= */
+.login-page {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Glass Login Box */
+.login-box {
+    width: 360px;
+    padding: 35px;
+    border-radius: 20px;
+
+    text-align: center;
+
+    background: rgba(10, 10, 20, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(0, 255, 255, 0.2);
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 255, 0.3),
+        0 0 25px rgba(0, 255, 255, 0.2),
+        0 0 50px rgba(0, 255, 255, 0.1);
+
+    animation: neonPulse 2.5s infinite ease-in-out;
+
+    position: relative;
+    z-index: 2;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Title */
+.login-box h2 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* Inputs */
+.login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    margin: 10px 0;
+
+    border: none;
+    border-radius: 10px;
+
+    outline: none;
+    font-size: 14px;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    transition: 0.3s;
+}
+
+.login-box input:focus {
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+
+/* Login Button */
+.login-box button {
+    width: 100%;
+    padding: 12px;
+
+    margin-top: 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: linear-gradient(45deg, #4a6cf7, #00c9ff);
+    color: white;
+
+    font-weight: bold;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.login-box button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Signup Button */
+.signup-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+
+    border-radius: 10px;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.signup-btn:hover {
+    background: white;
+    color: #4a6cf7;
+}
+
+/* =========================
+   PLANNER CONTAINER
+========================= */
+#planner {
+    display: none;
+    width: 100%;
+    height: 100vh;
+
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+
+    color: white;
+    text-align: center;
+
+    padding: 18px;
+    border-radius: 15px;
+
+    margin-bottom: 20px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Cards */
+.card {
+    background: rgba(255, 255, 255, 0.9);
+
+    padding: 15px;
+    border-radius: 15px;
+
+    margin-bottom: 15px;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Inputs */
+input, select {
+    width: 100%;
+    padding: 10px;
+
+    margin-top: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    outline: none;
+}
+
+/* Main Button */
+.main-btn {
+    width: 100%;
+    padding: 12px;
+
+    margin-top: 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #4a6cf7;
+    color: white;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.main-btn:hover {
+    transform: scale(1.03);
+}
+
+/* Task buttons */
+.task-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.done-btn {
+    background: green;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Profile */
+.profile {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#profilePic {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+}
+
+/* Logout */
+.logout-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Completed task */
+.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* Task animation */
+.task {
+    transition: 0.3s;
+}
+
+.task:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media (max-width: 480px) {
+    .login-box {
+        width: 90%;
+        padding: 25px;
+    }
+}
+@keyframes neonPulse {
+    0% {
+        box-shadow:
+            0 0 10px rgba(0, 255, 255, 0.3),
+            0 0 25px rgba(0, 255, 255, 0.2),
+            0 0 50px rgba(0, 255, 255, 0.1);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 15px rgba(0, 255, 255, 0.6),
+            0 0 35px rgba(0, 255, 255, 0.4),
+            0 0 70px rgba(0, 255, 255, 0.2);
+        transform: scale(1.02);
+    }
+
+    100% {
+        box-shadow:
+            0 0 10px rgba(0, 255, 255, 0.3),
+            0 0 25px rgba(0, 255, 255, 0.2),
+            0 0 50px rgba(0, 255, 255, 0.1);
+        transform: scale(1);
+    }
+}
+/* =========================
+   STAR BACKGROUND SYSTEM
+========================= */
+
+.stars, .stars2, .stars3 {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    z-index: 0;
+}
+
+/* Layer 1 */
+.stars {
+    background: transparent url("https://www.transparenttextures.com/patterns/stardust.png");
+    animation: moveStars 60s linear infinite;
+    opacity: 0.5;
+}
+
+/* Layer 2 (faster) */
+.stars2 {
+    background: transparent url("https://www.transparenttextures.com/patterns/stardust.png");
+    animation: moveStars 40s linear infinite;
+    opacity: 0.3;
+}
+
+/* Layer 3 (fastest) */
+.stars3 {
+    background: transparent url("https://www.transparenttextures.com/patterns/stardust.png");
+    animation: moveStars 20s linear infinite;
+    opacity: 0.2;
+}
+
+/* Movement animation */
+@keyframes moveStars {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-1000px);
+    }
+}
+.signup-image {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.signup-image img {
+    width: 220px;
+    height: 140px;
+    object-fit: cover;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 0 15px rgba(0,255,255,0.5),
+        0 0 30px rgba(0,255,255,0.3);
+
+    animation: floatImage 3s ease-in-out infinite;
+}
+
+@keyframes floatImage {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
