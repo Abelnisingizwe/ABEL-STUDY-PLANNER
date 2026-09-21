@@ -1023,7 +1023,32 @@ async function checkRwibutsoTVReminders() {
       const reminderDateTime =
         new Date(`${data.date}T${data.time}`);
 
-      if (now >= reminderDateTime) {
+      // Calculate when the reminder should appear
+      let reminderShowTime =
+        new Date(reminderDateTime);
+
+      if (data.reminderBefore === "10_minutes") {
+
+        reminderShowTime.setMinutes(
+          reminderShowTime.getMinutes() - 10
+        );
+
+      } else if (data.reminderBefore === "1_hour") {
+
+        reminderShowTime.setHours(
+          reminderShowTime.getHours() - 1
+        );
+
+      } else if (data.reminderBefore === "1_day") {
+
+        reminderShowTime.setDate(
+          reminderShowTime.getDate() - 1
+        );
+
+      }
+
+      // Show reminder when its reminder time arrives
+      if (now >= reminderShowTime) {
 
         activeReminder = data;
 
@@ -1065,6 +1090,10 @@ async function checkRwibutsoTVReminders() {
         " ⏰ " +
         activeReminder.time;
 
+    } else {
+
+      tv.style.display = "none";
+
     }
 
   } catch (error) {
@@ -1077,8 +1106,6 @@ async function checkRwibutsoTVReminders() {
   }
 
 }
-
-
 // Check every 30 seconds
 function startRwibutsoTVReminderChecker() {
 
