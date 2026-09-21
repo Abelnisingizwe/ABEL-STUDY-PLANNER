@@ -120,7 +120,7 @@ requestNotificationPermission();
     loadFiles();
     loadProfileImage();
     loadReminders();
-startRwibutsoTVReminderChecker();
+    startRwibutsoTVReminderChecker();
 
   } catch (e) {
     alert(e.message);
