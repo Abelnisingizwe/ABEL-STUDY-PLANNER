@@ -248,15 +248,41 @@ Delete Selected Files
 <div class="card">
     <h3>📺 URWIBUTSO TV</h3>
 
+    <!-- REMINDER TV DISPLAY -->
+    <div id="rwibutsoReminderTV"
+         style="
+         display:none;
+         padding:25px;
+         margin-bottom:20px;
+         border-radius:15px;
+         background:#111;
+         color:white;
+         text-align:center;
+         box-shadow:0 0 20px rgba(255,193,7,0.5);
+         ">
+
+        <div style="font-size:22px;">
+            🔔 RWIBUTSO TV
+        </div>
+
+        <h2 id="rwibutsoReminderTitle"></h2>
+
+        <p id="rwibutsoReminderDescription"></p>
+
+        <div id="rwibutsoReminderTime"
+             style="font-size:18px;">
+        </div>
+
+    </div>
+
     <!-- PDF / Google Drive -->
     <iframe
         id="pdfFrame"
         style="width:100%;height:500px;border:none;">
     </iframe>
 
-    <!-- Image -->
-
 </div>
+
 <button class="main-btn logout-btn"
         onclick="logout()">
         Logout

@@ -120,6 +120,7 @@ requestNotificationPermission();
     loadFiles();
     loadProfileImage();
     loadReminders();
+startRwibutsoTVReminderChecker();
 
   } catch (e) {
     alert(e.message);
@@ -989,3 +990,109 @@ window.addEventListener(
 
   }
 );
+
+// ================= RWIBUTSO TV REMINDER =================
+
+let reminderTVTimer = null;
+
+async function checkRwibutsoTVReminders() {
+
+  if (!currentUser) return;
+
+  const now = new Date();
+
+  try {
+
+    const q = query(
+      collection(db, "reminders"),
+      where("user", "==", currentUser)
+    );
+
+    const snapshot = await getDocs(q);
+
+    let activeReminder = null;
+
+    snapshot.forEach((docSnap) => {
+
+      const data = docSnap.data();
+
+      if (data.completed) return;
+
+      if (!data.date || !data.time) return;
+
+      const reminderDateTime =
+        new Date(`${data.date}T${data.time}`);
+
+      if (now >= reminderDateTime) {
+
+        activeReminder = data;
+
+      }
+
+    });
+
+    const tv =
+      document.getElementById("rwibutsoReminderTV");
+
+    const title =
+      document.getElementById("rwibutsoReminderTitle");
+
+    const description =
+      document.getElementById(
+        "rwibutsoReminderDescription"
+      );
+
+    const reminderTime =
+      document.getElementById(
+        "rwibutsoReminderTime"
+      );
+
+    if (!tv) return;
+
+    if (activeReminder) {
+
+      tv.style.display = "block";
+
+      title.textContent =
+        "🔔 " + activeReminder.title;
+
+      description.textContent =
+        activeReminder.description || "";
+
+      reminderTime.textContent =
+        "📅 " +
+        activeReminder.date +
+        " ⏰ " +
+        activeReminder.time;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "RWIBUTSO TV REMINDER ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+// Check every 30 seconds
+function startRwibutsoTVReminderChecker() {
+
+  if (reminderTVTimer) {
+
+    clearInterval(reminderTVTimer);
+
+  }
+
+  checkRwibutsoTVReminders();
+
+  reminderTVTimer = setInterval(
+    checkRwibutsoTVReminders,
+    30000
+  );
+
+}
