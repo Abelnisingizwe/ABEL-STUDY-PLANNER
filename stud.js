@@ -37,13 +37,13 @@ async function requestNotificationPermission() {
       );
 
 
-      const token = await getToken(messaging,{
+      fcmToken = await getToken(messaging,{
         vapidKey:"BBx_zJTcCHfRG5AM7YmbU45d7PSYUBHfZk2-DVuyhAyM-ybpG-MMhVX_YGRgMTam7r2Lzv7xETMz1XJROD4mRf8",
         serviceWorkerRegistration:registration
       });
 
 
-      console.log("FCM Token:",token);
+      console.log("FCM Token:",fcmToken);
 
 
       // SAVE TOKEN
@@ -52,7 +52,7 @@ async function requestNotificationPermission() {
         await setDoc(
           doc(db,"users",auth.currentUser.email),
           {
-            fcmToken:token
+           fcmToken:fcmToken
           },
           {
             merge:true
@@ -81,6 +81,7 @@ async function requestNotificationPermission() {
 }
 // ================= USER =================
 let currentUser = null;
+let fcmToken = null;
 
 // ================= SIGNUP =================
 window.signup = async function () {
@@ -259,32 +260,53 @@ window.addReminder = async function () {
 
   try {
 
-    await addDoc(
-      collection(db, "reminders"),
-      {
+    // SAVE REMINDER FOR STUDENT UI
+await addDoc(
+  collection(db, "reminders"),
+  {
+    user: currentUser,
+    title: title,
+    description: description,
+    date: date,
+    time: time,
+    reminderBefore: reminderBefore,
+    repeat: repeat,
+    completed: false,
+    createdAt: new Date()
+  }
+);
 
-        user: currentUser,
+// SEND REMINDER TO BACKEND SCHEDULER
+if (!fcmToken) {
+  throw new Error("FCM Token ntaraboneka. Ongera winjire muri account.");
+}
 
-        title: title,
+const dateTime = `${date}T${time}`;
 
-        description: description,
+const response = await fetch(
+  "http://localhost:3000/create-reminder",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      token: fcmToken,
+      title: title,
+      dateTime: dateTime
+    })
+  }
+);
 
-        date: date,
+const result = await response.json();
 
-        time: time,
+if (!response.ok || !result.success) {
+  throw new Error(
+    result.error || "Reminder ntiyoherejwe kuri backend."
+  );
+}
 
-        reminderBefore: reminderBefore,
-
-        repeat: repeat,
-
-        completed: false,
-
-        createdAt: new Date()
-
-      }
-    );
-
-
+console.log("Backend reminder created:", result.reminder);
     alert("Reminder yabitswe neza!");
 
 
@@ -321,6 +343,33 @@ window.addReminder = async function () {
 
 };
 
+// ================= DELETE REMINDER =================
+
+window.deleteReminder = async function (reminderId) {
+
+  console.log("DELETE CLICKED:", reminderId);
+
+  try {
+
+    await deleteDoc(
+      doc(db, "reminders", reminderId)
+    );
+    console.log("REMINDER DELETED:", reminderId);
+
+    loadReminders();
+
+  } catch (error) {
+
+    console.error(
+      "DELETE REMINDER ERROR:",
+      error
+    );
+
+    alert("Reminder ntiyashoboye gusibwa.");
+
+  }
+
+};
 
 // ================= LOAD REMINDERS =================
 
@@ -357,40 +406,50 @@ console.log("Reminder user:", currentUser);
       const div =
         document.createElement("div");
 
+div.innerHTML = `
 
-      div.innerHTML = `
+  <input
+    type="checkbox"
+    class="reminderCheck"
+  >
 
-        <input
-          type="checkbox"
-          class="reminderCheck"
-          value="${docSnap.id}"
-        >
+  <strong>
+    ${data.title}
+  </strong>
 
-        <strong>
-          ${data.title}
-        </strong>
+  <br>
 
-        <br>
+  ${data.description || ""}
 
-        ${data.description || ""}
+  <br>
 
-        <br>
+  📅 ${data.date}
 
-        📅 ${data.date}
+  ⏰ ${data.time}
 
-        ⏰ ${data.time}
+  <br>
 
-        <br>
+  🔔 ${data.reminderBefore}
 
-        🔔 ${data.reminderBefore}
+  |
 
-        |
+  🔄 ${data.repeat}
 
-        🔄 ${data.repeat}
+  <br><br>
 
-        <br><br>
+`;
 
-      `;
+const checkbox = div.querySelector(".reminderCheck");
+
+checkbox.addEventListener("change", function () {
+
+  if (this.checked) {
+
+    deleteReminder(docSnap.id);
+
+  }
+
+});
 
 
       list.appendChild(div);
