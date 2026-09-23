@@ -32,9 +32,9 @@ async function requestNotificationPermission() {
       console.log("Notification permission granted");
 
 
-      const registration = await navigator.serviceWorker.register(
-        "firebase-messaging-sw.js"
-      );
+     const registration = await navigator.serviceWorker.register(
+  "service-worker.js"
+);
 
 
       fcmToken = await getToken(messaging,{
@@ -109,9 +109,9 @@ window.login = async function () {
 
    currentUser = res.user.email;
 
-requestNotificationPermission();
+await requestNotificationPermission();
 
-    document.getElementById("loginPage").style.display = "none";
+document.getElementById("loginPage").style.display = "none";
     document.getElementById("planner").style.display = "block";
 
     document.getElementById("welcomeUser").innerText =
