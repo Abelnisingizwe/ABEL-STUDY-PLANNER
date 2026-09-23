@@ -284,7 +284,7 @@ if (!fcmToken) {
 const dateTime = `${date}T${time}`;
 
 const response = await fetch(
-  "http://localhost:3000/create-reminder",
+  "https://abel-study-planner-backend.onrender.com/create-reminder",
   {
     method: "POST",
     headers: {

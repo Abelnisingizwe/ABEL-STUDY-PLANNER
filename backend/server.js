@@ -7,7 +7,12 @@ const { cert } = require("firebase-admin/app");
 const { getMessaging } = require("firebase-admin/messaging");
 const { getFirestore } = require("firebase-admin/firestore");
 
-const serviceAccount = require("./abel-study-planner-firebase-adminsdk-fbsvc-eed4a9c61f.json");
+const serviceAccount = JSON.parse(
+    Buffer.from(
+        process.env.FIREBASE_SERVICE_ACCOUNT_BASE64,
+        "base64"
+    ).toString("utf8")
+);
 
 admin.initializeApp({
     credential: cert(serviceAccount)
