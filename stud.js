@@ -365,11 +365,61 @@ window.loadReminders = async function () {
 
   list.innerHTML = "";
 
-  console.log(
-    "Reminders are managed by the backend scheduler."
-  );
-};
+  if (!currentUser) {
+    list.innerHTML = "<p>Please login first.</p>";
+    return;
+  }
 
+  try {
+
+    const q = query(
+      collection(db, "reminders"),
+      where("user", "==", currentUser)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      list.innerHTML = "<p>No reminders yet.</p>";
+      return;
+    }
+
+    snapshot.forEach((docSnap) => {
+
+      const data = docSnap.data();
+
+      const div =
+        document.createElement("div");
+
+      div.style.padding = "12px";
+      div.style.marginBottom = "10px";
+      div.style.border = "1px solid #ddd";
+      div.style.borderRadius = "8px";
+
+      div.innerHTML = `
+        <strong>${data.title || "Reminder"}</strong>
+        <br>
+        <span>${data.description || ""}</span>
+        <br>
+        <small>
+          ${data.date || ""} ${data.time || ""}
+        </small>
+      `;
+
+      list.appendChild(div);
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Error loading reminders:",
+      error
+    );
+
+    list.innerHTML =
+      "<p>Failed to load reminders.</p>";
+  }
+};
 window.deleteSelectedFiles = async function(){
 
   const checked =
