@@ -260,21 +260,8 @@ window.addReminder = async function () {
 
   try {
 
-    // SAVE REMINDER FOR STUDENT UI
-await addDoc(
-  collection(db, "reminders"),
-  {
-    user: currentUser,
-    title: title,
-    description: description,
-    date: date,
-    time: time,
-    reminderBefore: reminderBefore,
-    repeat: repeat,
-    completed: false,
-    createdAt: new Date()
-  }
-);
+   // Reminder will be saved by the backend scheduler.
+// Do not save it here to avoid duplicate Firestore records.
 
 // SEND REMINDER TO BACKEND SCHEDULER
 if (!fcmToken) {

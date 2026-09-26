@@ -122,15 +122,35 @@ app.post("/create-reminder", async (req, res) => {
             });
         }
 
-        const reminder = {
-            token,
-            title,
-            dateTime,
-            createdAt: new Date().toISOString()
-        };
+        const existingSnapshot = await db
+    .collection("reminders")
+    .where("token", "==", token)
+    .where("title", "==", title)
+    .where("dateTime", "==", dateTime)
+    .limit(1)
+    .get();
 
-        const docRef = await db.collection("reminders").add(reminder);
+if (!existingSnapshot.empty) {
+    const existingDoc = existingSnapshot.docs[0];
 
+    return res.json({
+        success: true,
+        duplicate: true,
+        reminder: {
+            id: existingDoc.id,
+            ...existingDoc.data()
+        }
+    });
+}
+
+const reminder = {
+    token,
+    title,
+    dateTime,
+    createdAt: new Date().toISOString()
+};
+
+const docRef = await db.collection("reminders").add(reminder);
         const savedReminder = {
             id: docRef.id,
             ...reminder
