@@ -118,10 +118,10 @@ document.getElementById("loginPage").style.display = "none";
       "Welcome " + currentUser;
 
        loadTasks();
-    loadFiles();
-    loadProfileImage();
+loadFiles();
+loadReminders();
+loadProfileImage();
 startRwibutsoTVReminderChecker();
-
   } catch (e) {
     alert(e.message);
   }
@@ -379,7 +379,17 @@ window.loadReminders = async function () {
 
     const snapshot = await getDocs(q);
 
-    if (snapshot.empty) {
+console.log(
+  "REMINDERS FOUND:",
+  snapshot.size
+);
+
+console.log(
+  "CURRENT USER FOR REMINDERS:",
+  "[" + currentUser + "]"
+);
+
+if (snapshot.empty) {
       list.innerHTML = "<p>No reminders yet.</p>";
       return;
     }
