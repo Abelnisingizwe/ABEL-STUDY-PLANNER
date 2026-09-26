@@ -249,7 +249,7 @@ setInterval(async () => {
             error.message
         );
     }
-}, 1000);
+}, 60000);
 
 // =========================
 // SERVER
