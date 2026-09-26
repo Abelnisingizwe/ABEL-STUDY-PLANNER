@@ -120,8 +120,7 @@ document.getElementById("loginPage").style.display = "none";
        loadTasks();
     loadFiles();
     loadProfileImage();
-    loadReminders();
-    startRwibutsoTVReminderChecker();
+startRwibutsoTVReminderChecker();
 
   } catch (e) {
     alert(e.message);
@@ -314,7 +313,8 @@ console.log("Backend reminder created:", result.reminder);
     ).value = "";
 
 
-    loadReminders();
+   // Reminder is handled by the backend scheduler.
+// Do not reload Firestore reminders here.
 
 
   } catch (error) {
@@ -343,8 +343,6 @@ window.deleteReminder = async function (reminderId) {
     );
     console.log("REMINDER DELETED:", reminderId);
 
-    loadReminders();
-
   } catch (error) {
 
     console.error(
@@ -359,9 +357,7 @@ window.deleteReminder = async function (reminderId) {
 };
 
 // ================= LOAD REMINDERS =================
-
 window.loadReminders = async function () {
-
   const list =
     document.getElementById("reminderList");
 
@@ -369,90 +365,9 @@ window.loadReminders = async function () {
 
   list.innerHTML = "";
 
-
-  try {
-
-    const q = query(
-      collection(db, "reminders"),
-      where("user", "==", currentUser)
-    );
-
-
-    const snapshot =
-      await getDocs(q);
-      console.log("Reminders found:", snapshot.size);
-console.log("Reminder user:", currentUser);
-
-
-    snapshot.forEach((docSnap) => {
-
-      const data =
-        docSnap.data();
-
-
-      const div =
-        document.createElement("div");
-
-div.innerHTML = `
-
-  <input
-    type="checkbox"
-    class="reminderCheck"
-  >
-
-  <strong>
-    ${data.title}
-  </strong>
-
-  <br>
-
-  ${data.description || ""}
-
-  <br>
-
-  📅 ${data.date}
-
-  ⏰ ${data.time}
-
-  <br>
-
-  🔔 ${data.reminderBefore}
-
-  |
-
-  🔄 ${data.repeat}
-
-  <br><br>
-
-`;
-
-const checkbox = div.querySelector(".reminderCheck");
-
-checkbox.addEventListener("change", function () {
-
-  if (this.checked) {
-
-    deleteReminder(docSnap.id);
-
-  }
-
-});
-
-
-      list.appendChild(div);
-
-    });
-
-
-  } catch (error) {
-
-    console.error(
-      "LOAD REMINDERS ERROR:",
-      error
-    );
-
-  }
-
+  console.log(
+    "Reminders are managed by the backend scheduler."
+  );
 };
 
 window.deleteSelectedFiles = async function(){
@@ -606,13 +521,12 @@ window.loadFiles = async function () {
   try {
 
     console.log("Current user:", currentUser);
-
     const q = query(
-      collection(db, "files"),
-      where("user", "==", currentUser)
-    );
+  collection(db, "files"),
+  where("user", "==", currentUser)
+);
 
-    let snapshot = await getDocs(q);
+const snapshot = await getDocs(q);
 
     console.log("Files found:", snapshot.size);
 
@@ -1047,14 +961,11 @@ async function checkRwibutsoTVReminders() {
 
   const now = new Date();
 
-  try {
+    try {
 
-    const q = query(
-      collection(db, "reminders"),
-      where("user", "==", currentUser)
-    );
+    console.log("RWIBUTSO TV is managed by the backend scheduler.");
 
-    const snapshot = await getDocs(q);
+    return;
 
     let activeReminder = null;
 
